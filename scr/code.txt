@@ -1,0 +1,83 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace МаяИгра
+{
+    /// <summary>
+    /// Логика взаимодействия для CastlePage.xaml
+    /// </summary>
+    public partial class CastlePage : Page
+    {
+        public CastlePage()
+        {
+            InitializeComponent();
+            MainWindow.State.SetLocation(" Королевский замок");
+            MainWindow.State.CastleVisited = true;
+
+            if (MainWindow.State.CastleRewardCollected)
+                DisableButtons();
+        }
+
+        private void Fight_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (MainWindow.State.CastleRewardCollected) return;
+
+            var button = sender as Button;
+
+            // Сравниваем по имени кнопки, а не по тексту
+            if (button.Name == "MagicButton")
+            {
+                MainWindow.State.AddScore(4);
+                MainWindow.State.CastleRewardCollected = true;
+                ResultText.Text = " Магия победила дракона! +4 сокровища!";
+                ResultText.Foreground = Brushes.LightGreen;
+                CheckWinCondition();
+                DisableButtons();
+            }
+            else
+            {
+                MainWindow.State.SubtractScore(1);
+                ResultText.Text = $" {button.Content} неэффективен! Дракон контратакует (-1)";
+                ResultText.Foreground = Brushes.Orange;
+                button.IsEnabled = false;
+            }
+        }
+
+        private void CheckWinCondition()
+        {
+            if (MainWindow.State.HasWon)
+            {
+                NavigationService.Navigate(new EndPage(true));
+            }
+        }
+
+        private void DisableButtons()
+        {
+            SwordButton.IsEnabled = false;
+            BowButton.IsEnabled = false;
+            MagicButton.IsEnabled = false;
+        }
+
+        private void ToForestButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new ForestPage());
+        }
+
+        private void ToCaveButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new CavePage());
+        }
+    }
+}    
