@@ -1,0 +1,1 @@
+# kursovaya1231-Kalashnikova-Galushko-Medvedkov
